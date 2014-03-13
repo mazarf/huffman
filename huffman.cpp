@@ -51,6 +51,14 @@ void compressionMode()
 	unsigned int frequencies[256]; // a character could have up to 4^32-1 occurrences...
 	fill(frequencies, frequencies + 256, 0);
 	
+	if(cin.peek() == -1) // EOF
+	{
+		cout << "HUFFMA5" << '\0';
+		for(int i = 0; i < 256 * 4; i++)
+			cout.put('\0');
+		return;
+	} // exceptional case where the file is empty (arguably invalid input...)
+	
 	char c; // read character by character
 	while(cin.get(c)) // takes 2 eofs? what the heck?
 	{	
@@ -177,6 +185,12 @@ void decompressionMode()
 		//getBits(buffer);
 		findChar(h.top(), buffer);
 	 } // for
+	 
+	 if(n == 1) // only one char. seems to break my program
+	 {
+		 for(unsigned int i = 0; i < totalSize; i++)
+			cout.put(h.top()->character);
+	 }
 		 
 	 
 	 
