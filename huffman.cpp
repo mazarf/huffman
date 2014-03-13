@@ -107,7 +107,9 @@ void compressionMode()
 	//cout << h.top()->frequency << ' ' << h.top()->character << endl;
 	
 	//inorder(h.top());
-	
+	//for(int i = 0; i < 256; i++)
+	//	if(!codes[i].empty())
+	//		cerr << (char)i << ' ' << codes[i] << endl;
 	compress(codes, frequencies);
 
 } // compressionMode
@@ -254,7 +256,6 @@ void compress(string *codes, unsigned int *frequencies)
 	char c;
 	while(cin.get(c))
 	{
-		//cerr << i << endl;
 		unsigned char u = c;
 		putInBuffer(codes[(int)u]); // ???
 	}
@@ -285,6 +286,12 @@ void putInBuffer(string code, bool end)
   
   if(end)
   { // end of file: clear buffer
+  
+	while(buffer.length() >= 8)
+	{
+		cout.put(binaryToDecimal(buffer.substr(0,8)));
+		buffer.erase(0,8);
+	} // print any extra bytes built up (a problem with huffman codes larger than 8 bits)
   
 	if(buffer.length() == 0)
 		return; // don't print an empty buffer!
@@ -352,16 +359,23 @@ unsigned int parseFrequency()
 
 void getBits(string &buffer)
 { // convert next char to 8 string "bits" and append to buffer
-	unsigned char c = cin.get();
+	//unsigned char c = cin.get();
+	// consider changing to if(cin.get(c)) u = c else return
+	//if(cin.eof()) return;
 	
-	if(cin.eof()) return;
+	char c;
+	unsigned char u;
+	if(cin.get(c))
+		u = c;
+	else // failed. eof
+		return;
 	
 	for(int i = 0; i < 8; i++) // this aint right
 	{
 		string temp; // needed to reverse the bits
-		temp = (char)(c % 2 + 48);
+		temp = (char)(u % 2 + 48);
 		buffer = buffer + temp;
-		c = c / 2;
+		u = u / 2;
 	}
 	//cout << buffer << endl;
 	//buffer.erase(0,8);
@@ -373,13 +387,13 @@ void findChar(TreeNode *node, string &buffer)
 	if(buffer.empty())
 		getBits(buffer);
 		
-	if(buffer.empty() && cin.eof())
+	if(buffer.empty()) // if still empty give up
 		return;
 		
 	
 	// CURRENT PLAN: traverse the tree using a buffer of bits
 	if(node->left == 0 && node->right == 0)
-	  	cout << node->character;
+	  	cout.put(node->character);
 	else // not a leaf
 	{ // we need to go deeper
 			char c = buffer[0]; // c is a '0' or '1'
