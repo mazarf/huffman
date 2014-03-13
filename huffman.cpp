@@ -179,12 +179,14 @@ void decompressionMode()
 	 */
 	 
 	 string buffer;
-	 
 	 for(unsigned int i = 0; i < totalSize; i++)
 	 { // convert chars to string bits, use bits to traverse tree
 		//getBits(buffer);
 		findChar(h.top(), buffer);
 	 } // for
+	 
+	 //cerr << totalSize << endl;
+	 //cerr << i << endl;
 	 
 	 if(n == 1) // only one char. seems to break my program
 	 {
@@ -213,7 +215,7 @@ void huffman(Heap<TreeNode*> &heap, int n)
 		if(first->character < second->character) smallestChar = first->character;
 			else smallestChar = second->character;
 		
-		TreeNode *combined = new TreeNode(totalFrequency, smallestChar, first, second);
+		TreeNode *combined = new TreeNode(totalFrequency, smallestChar, second, first);
 											
 		heap.push(combined);
 	} // for
@@ -243,9 +245,9 @@ void dfs(TreeNode *t, string *codes, string code)
 	if(t->left || t->right) // not a leaf, so not a "real" character
 	{
 		if(t->left)
-			dfs(t->left, codes, code + '1');
+			dfs(t->left, codes, code + '0');
 		if(t->right)
-			dfs(t->right, codes, code + '0');
+			dfs(t->right, codes, code + '1');
 	}
 	else // if a leaf
 	{
@@ -401,8 +403,8 @@ void findChar(TreeNode *node, string &buffer)
 	if(buffer.empty())
 		getBits(buffer);
 		
-	if(buffer.empty()) // if still empty give up
-		return;
+	//if(buffer.empty()) // if still empty give up
+	//	return;
 		
 	
 	// CURRENT PLAN: traverse the tree using a buffer of bits
@@ -412,9 +414,9 @@ void findChar(TreeNode *node, string &buffer)
 	{ // we need to go deeper
 			char c = buffer[0]; // c is a '0' or '1'
 			buffer.erase(0, 1);
-	  		if(c == '1')
+	  		if(c == '0')
 				findChar(node->left, buffer);
-	  		else if(c == '0')
+	  		else if(c == '1')
 				findChar(node->right, buffer);
 	}
 	  
