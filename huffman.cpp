@@ -37,8 +37,8 @@ int main(int argc, char **argv)
 {
 	if(argc == 1)
 		compressionMode();
-	else if(strcmp(argv[1], "-d") == 0);
-		//decompressionMode();
+	else if(strcmp(argv[1], "-d") == 0)
+		decompressionMode();
 	
 	return 0;
 } // main
